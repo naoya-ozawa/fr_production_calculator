@@ -1,0 +1,9 @@
+[Projectile]
+A=18
+Z=8
+Energy=99.7
+[Target]
+A=97
+Z=42
+[Spin]
+S=Bass
