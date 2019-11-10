@@ -1,0 +1,10 @@
+18O ion into Au (500 um) + Mo (1000 um) layer
+recording ion position for 1 MeV intervals (EXYZ file)
+
+* 9:29 PM 11/9/2019
+18O beam energy = 130 MeV
+18O beam energy = 120 MeV
+18O beam energy = 110 MeV
+18O beam energy = 100 MeV
+18O beam energy = 90 MeV
+18O beam energy = 80 MeV
