@@ -31,18 +31,20 @@ int main(int argc, char** argv){
 	TCanvas *c1 = new TCanvas();
 
 	double T_Be_03 = 11.3; // um
-	double T_Be_04 = 9.6; // um
-	double T_Be_max = 15.0 + 13.0; // um
+	double T_Be_04 = 9.6; // um; Haba Gr MEF#101147032 #20
+	double T_Be_05 = 9.75; // um; Haba Gr MEF#101147032 #16
+	double T_Be_06 = 9.70; // um; Haba Gr MEF#101147032 #15
+	double T_Be_max = 13.0 + 13.0; // um
 
 	double T_He = 4.2 + 17.5 + 6.7; // mm
 
-	TF1 *f_degraded_beam = new TF1(Form("%g #mum Be + %g mm He + %g #mum Be",T_Be_03,T_He,T_Be_04),degraded_energy,95.,135.,2);
-	f_degraded_beam->SetParameters(T_Be_03+T_Be_04,T_He);
+	TF1 *f_degraded_beam = new TF1(Form("%g #mum Be + %g mm He + %g #mum Be",T_Be_05,T_He,T_Be_06),degraded_energy,95.,135.,2);
+	f_degraded_beam->SetParameters(T_Be_05+T_Be_06,T_He);
 	TGraph *g_degraded_beam = new TGraph(f_degraded_beam);
 	g_degraded_beam->SetMarkerColor(2);
 	g_degraded_beam->SetLineColor(2);
 
-	TF1 *f_thickBe = new TF1("15 #mum Be + 28.4 mm He + 13 #mum Be",degraded_energy,95.,135.,2);
+	TF1 *f_thickBe = new TF1(Form("%g #mum Be + %g mm He + %g #mum Be",13.,T_He,13.),degraded_energy,95.,135.,2);
 	f_thickBe->SetParameters(T_Be_max,T_He);
 	TGraph *g_thickBe = new TGraph(f_thickBe);
 	g_thickBe->SetMarkerColor(4);
