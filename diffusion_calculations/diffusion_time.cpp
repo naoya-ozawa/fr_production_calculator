@@ -43,7 +43,7 @@ double Au_selfdiffusion(double T){
     double p = 0.13;
     double q = -0.12;
 
-    return D_Tm*TMath::Power(T/Tm,3./2.) / ( (1.+p-(p*T/Tm)) * TMath::Power(1.-q+(q*T/Tm),2./3.) );
+    return D_Tm*TMath::Power(10.,4) * TMath::Power(T/Tm,3./2.) / ( (1.+p-(p*T/Tm)) * TMath::Power(1.-q+(q*T/Tm),2./3.) );
   }else{ // Neumann1986
     double kB = 8.6*TMath::Power(10.,-5); // eV/K
 
@@ -51,11 +51,20 @@ double Au_selfdiffusion(double T){
   }
 }
 
+double D_m(double *x, double *par){
+  double T = x[0]; // K
+  double m = par[0]; // u
+  double m_Au = 197.0; // u
+
+  // Schoen1958
+  return TMath::Sqrt(m_Au/m)*Au_selfdiffusion(T);
+}
+
 
 int main(int argc, char** argv){
 	TRint rootapp("app",&argc,argv);
 	TCanvas *c1 = new TCanvas();
-	c1->Divide(2,1);
+	c1->Divide(2,2);
 
   double temp[4] = {300.,600.,900.,1200.}; // degC
   double inject_energy[6] = {80.,90.,100.,110.,120.,130.};
@@ -67,8 +76,9 @@ int main(int argc, char** argv){
 
   double D_Fr[4];
   for (int i=0; i<4; ++i){
-    // Schoen1958
-    D_Fr[i] = TMath::Sqrt(197./210.)*Au_selfdiffusion(temp[i]+273.);
+    double temperature[1] = {temp[i]+273.};
+    double mass[1] = {210.};
+    D_Fr[i] = D_m(temperature,mass);
   }
 
   c1->cd(1);
@@ -198,6 +208,17 @@ int main(int argc, char** argv){
 
   mg_tAve->Draw("ALP");
   c1->cd(2)->BuildLegend();
+
+
+
+  c1->cd(3);
+
+  TF1 *f_Dfr = new TF1("D_{Fr}(T)",D_m,300.,2000.,1);
+  f_Dfr->SetParameter(0,210.);
+  TGraph *g_Dfr = new TGraph(f_Dfr);
+  g_Dfr->SetTitle("Estimated Diffusion Coefficient as a Function of Au Temperature;Au Temperature (K);D_{Fr}(T) (cm^{2}/s)");
+  g_Dfr->Draw("AL");
+
 
   rootapp.Run();
 
