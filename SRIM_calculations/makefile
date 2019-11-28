@@ -6,3 +6,6 @@ energy_dependence:	energy_dependence.cpp
 
 energy_degradation:	energy_degradation.cpp
 	`root-config --cxx --cflags` -o energy_degradation energy_degradation.cpp `root-config --glibs`
+
+dEdX_plotter:	dEdX_plotter.cpp
+	`root-config --cxx --cflags` -o dEdX_plotter dEdX_plotter.cpp `root-config --glibs`
