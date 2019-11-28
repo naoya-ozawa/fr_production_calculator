@@ -27,14 +27,19 @@ double escape_probability(double *x, double *par){
   return 1.0 - f;
 }
 
-double Au_diffusion(double D_0_1, double Q_1, double D_0_2, double Q_2, double T){
+double Au_selfdiffusion(double T){
+
   double Tm = 1338.0; // melting point (K)
+  double D_0_1 = 0.025; // cm^2 s^-1
+  double Q_1 = 1.7; // eV
+  double D_0_2 = 0.83; // cm^2 s^-1
+  double Q_2 = 2.2; // eV
 
   if (T >= Tm){ // Lu2006
     double D_Tm = 2.50*TMath::Power(10.0,-9); // m^2/s
-    double M = 197.0; // g/mol
-    double gamma_lv = 1.21; // J/m^2
-    double r = 0.82*TMath::Power(10.0,-10); // m
+//    double M = 197.0; // g/mol
+//    double gamma_lv = 1.21; // J/m^2
+//    double r = 0.82*TMath::Power(10.0,-10); // m
     double p = 0.13;
     double q = -0.12;
 
@@ -59,15 +64,11 @@ int main(int argc, char** argv){
     depth_EXYZ70MeV[i] *= TMath::Power(10.,-4); // um --> cm
   }
 
-  double Au_D01 = 0.025; // cm^2 s^-1
-  double Au_Q1 = 1.7; // eV
-  double Au_D02 = 0.83; // cm^2 s^-1
-  double Au_Q2 = 2.2; // eV
 
   double D_Fr[4];
   for (int i=0; i<4; ++i){
     // Schoen1958
-    D_Fr[i] = TMath::Sqrt(197./210.)*Au_diffusion(Au_D01,Au_Q1,Au_D02,Au_Q2,temp[i]+273.);
+    D_Fr[i] = TMath::Sqrt(197./210.)*Au_selfdiffusion(temp[i]+273.);
   }
 
   c1->cd(1);
