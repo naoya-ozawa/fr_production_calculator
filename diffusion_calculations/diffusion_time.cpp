@@ -129,90 +129,53 @@ int main(int argc, char** argv){
   c1->cd(2);
 
   // average escape time vs beam energy for various temperatures
-  // using x_Ave = sqrt(2Dt) & 2sqrt(Dt)
-  // eq to t_Ave = d^2/2D & d^2/4D
+  // using <t> = d^2/3D in the Fujioka1981 model
 
-  double D_Fr_300deg = D_Fr[0];
-  double D_Fr_600deg = D_Fr[1];
-  double D_Fr_900deg = D_Fr[2];
-  double D_Fr_1200deg = D_Fr[3];
-
-  double tAve_nrm_300deg[6];
-  double tAve_nrm_600deg[6];
-  double tAve_nrm_900deg[6];
-  double tAve_nrm_1200deg[6];
-  double tAve_erf_300deg[6];
-  double tAve_erf_600deg[6];
-  double tAve_erf_900deg[6];
-  double tAve_erf_1200deg[6];
+  double tAve_300deg[6];
+  double tAve_600deg[6];
+  double tAve_900deg[6];
+  double tAve_1200deg[6];
   for (int i=0; i<6; ++i){
-    tAve_nrm_300deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i]/(2.0*D_Fr_300deg);
-    tAve_nrm_600deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i]/(2.0*D_Fr_600deg);
-    tAve_nrm_900deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i]/(2.0*D_Fr_900deg);
-    tAve_nrm_1200deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i]/(2.0*D_Fr_1200deg);
-    tAve_erf_300deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i]/(4.0*D_Fr_300deg);
-    tAve_erf_600deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i]/(4.0*D_Fr_600deg);
-    tAve_erf_900deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i]/(4.0*D_Fr_900deg);
-    tAve_erf_1200deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i]/(4.0*D_Fr_1200deg);
+    double temperature_300deg[1] = {300.+273.};
+    double temperature_600deg[1] = {600.+273.};
+    double temperature_900deg[1] = {900.+273.};
+    double temperature_1200deg[1] = {1200.+273.};
+    double mass[1] = {211.};
+    tAve_300deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i] / (3.0 * D_m(temperature_300deg,mass));
+    tAve_600deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i] / (3.0 * D_m(temperature_600deg,mass));
+    tAve_900deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i] / (3.0 * D_m(temperature_900deg,mass));
+    tAve_1200deg[i] = depth_EXYZ70MeV[i]*depth_EXYZ70MeV[i] / (3.0 * D_m(temperature_1200deg,mass));
   }
 
-  TGraph *g_nrm_300deg = new TGraph(6,inject_energy,tAve_nrm_300deg);
-  g_nrm_300deg->SetTitle("300#circC, #sqrt{2Dt} model");
-  g_nrm_300deg->SetMarkerColor(9);
-  g_nrm_300deg->SetLineColor(9);
+  TGraph *g_tAve_300deg = new TGraph(6,inject_energy,tAve_300deg);
+  g_tAve_300deg->SetTitle("300#circC");
+  g_tAve_300deg->SetMarkerColor(9);
+  g_tAve_300deg->SetLineColor(9);
 
-  TGraph *g_nrm_600deg = new TGraph(6,inject_energy,tAve_nrm_600deg);
-  g_nrm_600deg->SetTitle("600#circC, #sqrt{2Dt} model");
-  g_nrm_600deg->SetMarkerColor(4);
-  g_nrm_600deg->SetLineColor(4);
+  TGraph *g_tAve_600deg = new TGraph(6,inject_energy,tAve_600deg);
+  g_tAve_600deg->SetTitle("600#circC");
+  g_tAve_600deg->SetMarkerColor(4);
+  g_tAve_600deg->SetLineColor(4);
 
-  TGraph *g_nrm_900deg = new TGraph(6,inject_energy,tAve_nrm_900deg);
-  g_nrm_900deg->SetTitle("900#circC, #sqrt{2Dt} model");
-  g_nrm_900deg->SetMarkerColor(3);
-  g_nrm_900deg->SetLineColor(3);
+  TGraph *g_tAve_900deg = new TGraph(6,inject_energy,tAve_900deg);
+  g_tAve_900deg->SetTitle("900#circC");
+  g_tAve_900deg->SetMarkerColor(3);
+  g_tAve_900deg->SetLineColor(3);
 
-  TGraph *g_nrm_1200deg = new TGraph(6,inject_energy,tAve_nrm_1200deg);
-  g_nrm_1200deg->SetTitle("1200#circC, #sqrt{2Dt} model");
-  g_nrm_1200deg->SetMarkerColor(2);
-  g_nrm_1200deg->SetLineColor(2);
-
-  TGraph *g_erf_300deg = new TGraph(6,inject_energy,tAve_erf_300deg);
-  g_erf_300deg->SetTitle("300#circC, 2#sqrt{Dt} model");
-  g_erf_300deg->SetMarkerColor(9);
-  g_erf_300deg->SetLineColor(9);
-  g_erf_300deg->SetLineStyle(2);
-
-  TGraph *g_erf_600deg = new TGraph(6,inject_energy,tAve_erf_600deg);
-  g_erf_600deg->SetTitle("600#circC, 2#sqrt{Dt} model");
-  g_erf_600deg->SetMarkerColor(4);
-  g_erf_600deg->SetLineColor(4);
-  g_erf_600deg->SetLineStyle(2);
-
-  TGraph *g_erf_900deg = new TGraph(6,inject_energy,tAve_erf_900deg);
-  g_erf_900deg->SetTitle("900#circC, 2#sqrt{Dt} model");
-  g_erf_900deg->SetMarkerColor(3);
-  g_erf_900deg->SetLineColor(3);
-  g_erf_900deg->SetLineStyle(2);
-
-  TGraph *g_erf_1200deg = new TGraph(6,inject_energy,tAve_erf_1200deg);
-  g_erf_1200deg->SetTitle("1200#circC, 2#sqrt{Dt} model");
-  g_erf_1200deg->SetMarkerColor(2);
-  g_erf_1200deg->SetLineColor(2);
-  g_erf_1200deg->SetLineStyle(2);
+  TGraph *g_tAve_1200deg = new TGraph(6,inject_energy,tAve_1200deg);
+  g_tAve_1200deg->SetTitle("1200#circC");
+  g_tAve_1200deg->SetMarkerColor(2);
+  g_tAve_1200deg->SetLineColor(2);
 
   TMultiGraph *mg_tAve = new TMultiGraph();
-  mg_tAve->SetTitle("Average Escape Time of Fr from Au (from the 70 MeV range depth);Incident {}^{18}O Beam Energy (MeV);Escape Time (s)");
+  mg_tAve->SetTitle("Average Escape Time of {}^{211}Fr from Au (from the 70 MeV range depth);Incident {}^{18}O Beam Energy (MeV);Escape Time <t> = #frac{d^{2}}{3D} (s)");
 
-  mg_tAve->Add(g_nrm_300deg);
-  mg_tAve->Add(g_erf_300deg);
-  mg_tAve->Add(g_nrm_600deg);
-  mg_tAve->Add(g_erf_600deg);
-  mg_tAve->Add(g_nrm_900deg);
-  mg_tAve->Add(g_erf_900deg);
-  mg_tAve->Add(g_nrm_1200deg);
-  mg_tAve->Add(g_erf_1200deg);
+  mg_tAve->Add(g_tAve_300deg);
+  mg_tAve->Add(g_tAve_600deg);
+  mg_tAve->Add(g_tAve_900deg);
+  mg_tAve->Add(g_tAve_1200deg);
 
-  mg_tAve->Draw("ALP");
+  mg_tAve->Draw("AL");
   c1->cd(2)->BuildLegend();
 
 
