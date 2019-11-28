@@ -60,6 +60,11 @@ double D_m(double *x, double *par){
   return TMath::Sqrt(m_Au/m)*Au_selfdiffusion(T);
 }
 
+double y_escape(double lifetime, double D, double d){
+  double alpha = lifetime * D / (d*d);
+  return 0.5 * TMath::Sqrt(alpha) * TMath::TanH(1./TMath::Sqrt(alpha));
+}
+
 
 int main(int argc, char** argv){
 	TRint rootapp("app",&argc,argv);
@@ -69,10 +74,11 @@ int main(int argc, char** argv){
   double temp[4] = {300.,600.,900.,1200.}; // degC
   double inject_energy[6] = {80.,90.,100.,110.,120.,130.};
   double depth_EXYZ70MeV[6] = {2.7,5.9,9.2,12.7,16.3,20.1}; // um depth for the 70 MeV range
+  double depth_EXYZ90MeV[6] = {1.0,1.0,3.03,6.50,10.13,13.92}; // um depth for the 90 MeV range --> maximize 210Fr production
   for (int i=0; i<6; ++i){
     depth_EXYZ70MeV[i] *= TMath::Power(10.,-4); // um --> cm
+    depth_EXYZ90MeV[i] *= TMath::Power(10.,-4);
   }
-
 
   double D_Fr[4];
   for (int i=0; i<4; ++i){
@@ -195,7 +201,7 @@ int main(int argc, char** argv){
   g_erf_1200deg->SetLineStyle(2);
 
   TMultiGraph *mg_tAve = new TMultiGraph();
-  mg_tAve->SetTitle("Average Escape Time of {}^{210}Fr from Au (from the 70 MeV depth);Incident {}^{18}O Beam Energy (MeV);Escape Time (s)");
+  mg_tAve->SetTitle("Average Escape Time of Fr from Au (from the 70 MeV range depth);Incident {}^{18}O Beam Energy (MeV);Escape Time (s)");
 
   mg_tAve->Add(g_nrm_300deg);
   mg_tAve->Add(g_erf_300deg);
@@ -213,11 +219,61 @@ int main(int argc, char** argv){
 
   c1->cd(3);
 
-  TF1 *f_Dfr = new TF1("D_{Fr}(T)",D_m,300.,2000.,1);
-  f_Dfr->SetParameter(0,210.);
-  TGraph *g_Dfr = new TGraph(f_Dfr);
-  g_Dfr->SetTitle("Estimated Diffusion Coefficient as a Function of Au Temperature;Au Temperature (K);D_{Fr}(T) (cm^{2}/s)");
-  g_Dfr->Draw("AL");
+  TF1 *f_D210fr = new TF1("D_{{}^{210}Fr}(T)",D_m,300.,2000.,1);
+  f_D210fr->SetParameter(0,210.);
+  TGraph *g_D210fr = new TGraph(f_D210fr);
+  g_D210fr->SetTitle("Estimated Diffusion Coefficient of {}^{210}Fr in Au;Au Temperature (K);D_{{}^{210}Fr}(T) (cm^{2}/s)");
+  g_D210fr->Draw("AL");
+
+
+
+  c1->cd(4);
+
+  double y_211Fr_300deg[6];
+  double y_211Fr_600deg[6];
+  double y_211Fr_900deg[6];
+  double y_211Fr_1200deg[6];
+  for (int i=0; i<6; ++i){
+    double tau_211Fr = 3.10 * 60. / TMath::Log(2.); // seconds
+    double temperature_300deg[1] = {300.+273.}; // K
+    double temperature_600deg[1] = {600.+273.};
+    double temperature_900deg[1] = {900.+273.};
+    double temperature_1200deg[1] = {1200.+273.};
+    double mass[1] = {211.};
+    y_211Fr_300deg[i] = y_escape(tau_211Fr,D_m(temperature_300deg,mass),depth_EXYZ70MeV[i]);
+    y_211Fr_600deg[i] = y_escape(tau_211Fr,D_m(temperature_600deg,mass),depth_EXYZ70MeV[i]);
+    y_211Fr_900deg[i] = y_escape(tau_211Fr,D_m(temperature_900deg,mass),depth_EXYZ70MeV[i]);
+    y_211Fr_1200deg[i] = y_escape(tau_211Fr,D_m(temperature_1200deg,mass),depth_EXYZ70MeV[i]);
+  }
+  TGraph *g_211frEscape_300deg = new TGraph(6,inject_energy,y_211Fr_300deg);
+  g_211frEscape_300deg->SetTitle("300#circC");
+  g_211frEscape_300deg->SetLineColor(9);
+  g_211frEscape_300deg->SetLineWidth(2);
+
+  TGraph *g_211frEscape_600deg = new TGraph(6,inject_energy,y_211Fr_600deg);
+  g_211frEscape_600deg->SetTitle("600#circC");
+  g_211frEscape_600deg->SetLineColor(4);
+  g_211frEscape_600deg->SetLineWidth(2);
+
+  TGraph *g_211frEscape_900deg = new TGraph(6,inject_energy,y_211Fr_900deg);
+  g_211frEscape_900deg->SetTitle("900#circC");
+  g_211frEscape_900deg->SetLineColor(3);
+  g_211frEscape_900deg->SetLineWidth(2);
+
+  TGraph *g_211frEscape_1200deg = new TGraph(6,inject_energy,y_211Fr_1200deg);
+  g_211frEscape_1200deg->SetTitle("1200#circC");
+  g_211frEscape_1200deg->SetLineColor(2);
+  g_211frEscape_1200deg->SetLineWidth(2);
+
+  TMultiGraph *mg_211frEscape = new TMultiGraph();
+  mg_211frEscape->SetTitle("Number Ratios of {}^{211}Fr Escaping the Au Target before Decay (d = 70 MeV Range);Incident Beam Energy E_{incident} (MeV);y_{{}^{211}Fr}(E_{incident})");
+  mg_211frEscape->Add(g_211frEscape_1200deg);
+  mg_211frEscape->Add(g_211frEscape_900deg);
+  mg_211frEscape->Add(g_211frEscape_600deg);
+  mg_211frEscape->Add(g_211frEscape_300deg);
+  mg_211frEscape->Draw("AL");
+
+  c1->cd(4)->BuildLegend();
 
 
   rootapp.Run();
