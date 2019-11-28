@@ -16,7 +16,7 @@ int main(int argc, char** argv){
 	c1->cd(1);
 
 	TMultiGraph *mg_range = new TMultiGraph();
-	mg_range->SetTitle("Energy/Stopping Range of {}^{18}O Ions in Solid Au vs Incident Beam Energy;Incident Energy E_{i} (MeV);Energy/Stopping Range X_{E_{threshold}} (#mum)");
+	mg_range->SetTitle("Energy/Stopping Range of {}^{18}O Ions in Solid Au vs Incident Beam Energy (w/ Linear Fit);Incident Energy E_{i} (MeV);Energy/Stopping Range X_{E_{threshold}} (#mum)");
 
 	// 0.1 MeV (stopping) range
 	double energy_stopping[7] = {70.,80.,90.,100.,110.,120.,130.};
@@ -47,10 +47,10 @@ int main(int argc, char** argv){
 //	g_70mev_range->Draw("APL");
 	mg_range->Add(g_70mev_range);
 
-//	TF1 *f_70mev_range = new TF1("f_70mev_range","[0] + [1]*TMath::Exp([2]*x)",75.,135.);
-//	f_70mev_range->SetParameters(-20.0,0.1,0.1);
-//	g_70mev_range->Fit(f_70mev_range);
-
+	TF1 *f_70mev_range = new TF1("f_70mev_range","[0] + [1]*x",75.,135.);
+	f_70mev_range->SetParameters(1.,1.);
+	f_70mev_range->SetLineColor(3);
+	g_70mev_range->Fit(f_70mev_range,"","M");
 
 //	c1->cd(3);
 	// 80 MeV range
@@ -67,6 +67,12 @@ int main(int argc, char** argv){
 //	g_80mev_range->Draw("APL");
 	mg_range->Add(g_80mev_range);
 
+	TF1 *f_80mev_range = new TF1("f_80mev_range","[0] + [1]*x - 10.*[2]",75.,135.);
+	f_80mev_range->FixParameter(0,f_70mev_range->GetParameter(0));
+	f_80mev_range->FixParameter(1,f_70mev_range->GetParameter(1));
+	f_80mev_range->SetParameter(2,1.);
+	f_80mev_range->SetLineColor(4);
+	g_80mev_range->Fit(f_80mev_range,"","M");
 
 //	c1->cd(4);
 	// 90 MeV range
@@ -82,6 +88,13 @@ int main(int argc, char** argv){
 	g_90mev_range->SetLineColor(7);
 //	g_90mev_range->Draw("APL");
 	mg_range->Add(g_90mev_range);
+
+	TF1 *f_90mev_range = new TF1("f_90mev_range","[0] + [1]*x - 20.*[2]",75.,135.);
+	f_90mev_range->FixParameter(0,f_70mev_range->GetParameter(0));
+	f_90mev_range->FixParameter(1,f_70mev_range->GetParameter(1));
+	f_90mev_range->FixParameter(2,f_80mev_range->GetParameter(2));
+	f_90mev_range->SetLineColor(7);
+	f_90mev_range->SetLineWidth(2);
 
 
 //	c1->cd(5);
@@ -99,9 +112,25 @@ int main(int argc, char** argv){
 //	g_100mev_range->Draw("APL");
 	mg_range->Add(g_100mev_range);
 
-	mg_range->Draw("APL");
+	TF1 *f_100mev_range = new TF1("f_100mev_range","[0] + [1]*x - 30.*[2]",75.,135.);
+	f_100mev_range->FixParameter(0,f_70mev_range->GetParameter(0));
+	f_100mev_range->FixParameter(1,f_70mev_range->GetParameter(1));
+	f_100mev_range->FixParameter(2,f_80mev_range->GetParameter(2));
+	f_100mev_range->SetLineColor(6);
+	f_100mev_range->SetLineWidth(2);
+
+	mg_range->Draw("AP*");
 	c1->cd(1)->BuildLegend();
 	c1->cd(1)->SetGrid(1,1);
+	f_70mev_range->Draw("SAME");
+	f_80mev_range->Draw("SAME");
+	f_90mev_range->Draw("SAME");
+	f_100mev_range->Draw("SAME");
+
+	TLatex l;
+	l.SetTextSize(0.03);
+	l.DrawLatex(70.,38.,"Empirical Fit:");
+	l.DrawLatex(70.,35.,Form("%3.2f + %3.2f E_{incident} - %3.2f E_{threshold}",f_70mev_range->GetParameter(0)+f_80mev_range->GetParameter(2)*70.,f_70mev_range->GetParameter(1),f_80mev_range->GetParameter(2)));
 
 	c1->cd(2);
 	// X_{E_th} vs E_th plot for E_i = 130 MeV
