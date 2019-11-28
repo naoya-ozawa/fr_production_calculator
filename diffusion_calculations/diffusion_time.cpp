@@ -86,25 +86,25 @@ int main(int argc, char** argv){
 
   double depth = 9.2*TMath::Power(10.,-4); // 100 MeV injection
 
-  TF1 *f_surface_Fr_300deg = new TF1("300#circC",escape_probability,0.0,300.0,2);
+  TF1 *f_surface_Fr_300deg = new TF1("300#circC",escape_probability,0.0,90.0,2);
   f_surface_Fr_300deg->SetParameters(depth,D_Fr[0]);
   TGraph *g_surface_Fr_300deg = new TGraph(f_surface_Fr_300deg);
   g_surface_Fr_300deg->SetMarkerColor(9);
   g_surface_Fr_300deg->SetLineColor(9);
 
-  TF1 *f_surface_Fr_600deg = new TF1("600#circC",escape_probability,0.0,300.0,2);
+  TF1 *f_surface_Fr_600deg = new TF1("600#circC",escape_probability,0.0,90.0,2);
   f_surface_Fr_600deg->SetParameters(depth,D_Fr[1]);
   TGraph *g_surface_Fr_600deg = new TGraph(f_surface_Fr_600deg);
   g_surface_Fr_600deg->SetMarkerColor(4);
   g_surface_Fr_600deg->SetLineColor(4);
 
-  TF1 *f_surface_Fr_900deg = new TF1("900#circC",escape_probability,0.0,300.0,2);
+  TF1 *f_surface_Fr_900deg = new TF1("900#circC",escape_probability,0.0,90.0,2);
   f_surface_Fr_900deg->SetParameters(depth,D_Fr[2]);
   TGraph *g_surface_Fr_900deg = new TGraph(f_surface_Fr_900deg);
   g_surface_Fr_900deg->SetMarkerColor(3);
   g_surface_Fr_900deg->SetLineColor(3);
 
-  TF1 *f_surface_Fr_1200deg = new TF1("1200#circC",escape_probability,0.0,300.0,2);
+  TF1 *f_surface_Fr_1200deg = new TF1("1200#circC",escape_probability,0.0,90.0,2);
   f_surface_Fr_1200deg->SetParameters(depth,D_Fr[3]);
   TGraph *g_surface_Fr_1200deg = new TGraph(f_surface_Fr_1200deg);
   g_surface_Fr_1200deg->SetMarkerColor(2);
