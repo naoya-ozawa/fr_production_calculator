@@ -90,7 +90,7 @@ int main(int argc, char** argv){
   c1->cd(1);
   // escape probability vs time for various temperatures
 
-  double depth = 9.2*TMath::Power(10.,-4); // 100 MeV injection
+  double depth = 3.03*TMath::Power(10.,-4); // 100 MeV injection, 210-Fr production 90 MeV range
 
   TF1 *f_surface_Fr_300deg = new TF1("300#circC",escape_probability,0.0,90.0,2);
   f_surface_Fr_300deg->SetParameters(depth,D_Fr[0]);
@@ -117,7 +117,7 @@ int main(int argc, char** argv){
   g_surface_Fr_1200deg->SetLineColor(2);
 
   TMultiGraph *mg_escape = new TMultiGraph();
-  mg_escape->SetTitle("{}^{210}Fr Escape Probability from Depth 9.2 #mum in the Au;Time (s);Probability");
+  mg_escape->SetTitle("{}^{210}Fr Escape Probability from Depth 3 #mum in the Au (90 MeV range for E_{incident} = 100 MeV);Time (s);Probability");
   mg_escape->Add(g_surface_Fr_1200deg);
   mg_escape->Add(g_surface_Fr_900deg);
   mg_escape->Add(g_surface_Fr_600deg);
@@ -151,21 +151,25 @@ int main(int argc, char** argv){
   g_tAve_300deg->SetTitle("300#circC");
   g_tAve_300deg->SetMarkerColor(9);
   g_tAve_300deg->SetLineColor(9);
+  g_tAve_300deg->SetLineWidth(2);
 
   TGraph *g_tAve_600deg = new TGraph(6,inject_energy,tAve_600deg);
   g_tAve_600deg->SetTitle("600#circC");
   g_tAve_600deg->SetMarkerColor(4);
   g_tAve_600deg->SetLineColor(4);
+  g_tAve_600deg->SetLineWidth(2);
 
   TGraph *g_tAve_900deg = new TGraph(6,inject_energy,tAve_900deg);
   g_tAve_900deg->SetTitle("900#circC");
   g_tAve_900deg->SetMarkerColor(3);
   g_tAve_900deg->SetLineColor(3);
+  g_tAve_900deg->SetLineWidth(2);
 
   TGraph *g_tAve_1200deg = new TGraph(6,inject_energy,tAve_1200deg);
   g_tAve_1200deg->SetTitle("1200#circC");
   g_tAve_1200deg->SetMarkerColor(2);
   g_tAve_1200deg->SetLineColor(2);
+  g_tAve_1200deg->SetLineWidth(2);
 
   TMultiGraph *mg_tAve = new TMultiGraph();
   mg_tAve->SetTitle("Average Escape Time of {}^{211}Fr from Au (from the 70 MeV range depth);Incident {}^{18}O Beam Energy (MeV);Escape Time <t> = #frac{d^{2}}{3D} (s)");
