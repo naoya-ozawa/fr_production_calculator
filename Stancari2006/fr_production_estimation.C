@@ -22,6 +22,7 @@ void fr_production_estimation(){
   double nfr210[10];
   double nfr211[10];
   for (int i=0; i<10; ++i){
+    energy[i] /= 18.; // MeV --> MeV/u
     nfr208[i] = fr208[i] / TMath::Power(10.,12);
     nfr209[i] = fr209[i] / TMath::Power(10.,12);
     nfr210[i] = fr210[i] / TMath::Power(10.,12);
@@ -47,15 +48,21 @@ void fr_production_estimation(){
   ge_fr211->SetLineColor(5);
 
   TMultiGraph *mg_fr_production = new TMultiGraph();
-  mg_fr_production->SetTitle("Fr production ratio (from calculation in Stancari2006);Incident Beam Energy (MeV);Normalized Production Rate P/j");
+  mg_fr_production->SetTitle("Fr production ratio (from calculation in Stancari2006);Incident Beam Energy (MeV/u);Normalized Production Rate P/j");
   mg_fr_production->Add(ge_fr208);
   mg_fr_production->Add(ge_fr209);
   mg_fr_production->Add(ge_fr210);
   mg_fr_production->Add(ge_fr211);
 
-  mg_fr_production->Draw("ALP");
+  mg_fr_production->Draw("AP*");
   c1->cd(1)->BuildLegend();
 
+  TSpline3 *sp208 = new TSpline3("spline fit for 208",ge_fr208);
+  sp208->SetLineColor(3);
+  sp208->SetLineWidth(2);
+  sp208->SetLineStyle(2);
+  sp208->Draw("SAME");
+  cout << "208@E = 5.5 MeV/u: " << sp208->Eval(5.5) << endl;
 
   c1->cd(2);
 
