@@ -1,8 +1,11 @@
 void fr_production_estimation(){
 
+  double eval_energy = 111.; // MeV
+
   // Input for CNS Case
-  double beam_current = 3.*TMath::Power(10.,-6); // eA
-  double beam_flux = (beam_current/(1.6e-19))/6.0; // For 6+ ions
+//  double beam_current = 3.*TMath::Power(10.,-6); // eA
+  double beam_current = 1.*TMath::Power(10.,-6); // eA
+  double beam_flux = beam_current/(6.0*1.6*TMath::Power(10.,-19)); // pps For 6+ ions
   double ext_eff = 0.1; // extraction efficiency of the ion source
   double geo_eff = 0.001; // detection efficiency of SSD
 
@@ -22,7 +25,6 @@ void fr_production_estimation(){
   double nfr210[10];
   double nfr211[10];
   for (int i=0; i<10; ++i){
-    energy[i] /= 18.; // MeV --> MeV/u
     nfr208[i] = fr208[i] / TMath::Power(10.,12);
     nfr209[i] = fr209[i] / TMath::Power(10.,12);
     nfr210[i] = fr210[i] / TMath::Power(10.,12);
@@ -62,7 +64,32 @@ void fr_production_estimation(){
   sp208->SetLineWidth(2);
   sp208->SetLineStyle(2);
   sp208->Draw("SAME");
-  cout << "208@E = 5.5 MeV/u: " << sp208->Eval(5.5) << endl;
+  cout << "P/j_{208} = " << sp208->Eval(eval_energy) << " --> ";
+  cout << "P_{208} = " << sp208->Eval(eval_energy)*beam_flux << " pps" << endl;
+
+  TSpline3 *sp209 = new TSpline3("spline fit for 209",ge_fr209);
+  sp209->SetLineColor(4);
+  sp209->SetLineWidth(2);
+  sp209->SetLineStyle(2);
+  sp209->Draw("SAME");
+  cout << "P/j_{209} = " << sp209->Eval(eval_energy) << " --> ";
+  cout << "P_{209} = " << sp209->Eval(eval_energy)*beam_flux << " pps" << endl;
+
+  TSpline3 *sp210 = new TSpline3("spline fit for 210",ge_fr210);
+  sp210->SetLineColor(2);
+  sp210->SetLineWidth(2);
+  sp210->SetLineStyle(2);
+  sp210->Draw("SAME");
+  cout << "P/j_{210} = " << sp210->Eval(eval_energy) << " --> ";
+  cout << "P_{210} = " << sp210->Eval(eval_energy)*beam_flux << " pps" << endl;
+
+  TSpline3 *sp211 = new TSpline3("spline fit for 211",ge_fr211);
+  sp211->SetLineColor(5);
+  sp211->SetLineWidth(2);
+  sp211->SetLineStyle(2);
+  sp211->Draw("SAME");
+  cout << "P/j_{211} = " << sp211->Eval(eval_energy) << " --> ";
+  cout << "P_{211} = " << sp211->Eval(eval_energy)*beam_flux << " pps" << endl;
 
   c1->cd(2);
 
